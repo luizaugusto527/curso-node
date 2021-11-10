@@ -6,28 +6,32 @@ const Post = require('./models/Post')
 
 
 // template engine
-app.engine('handlebars',handlebars({defaultLayout:'main'}))
-app.set('view engine','handlebars')
+app.engine('handlebars', handlebars({ defaultLayout: 'main' }))
+app.set('view engine', 'handlebars')
 
 //body-parser
 
-app.use(bodyParser.urlencoded({extended:true}))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.get('/',(req,res)=> {
-    Post.findAll({order:[['id','DESC']]}).then((posts)=>res.render('home',{posts:posts}))
+app.get('/', (req, res) => {
+    Post.findAll({ order: [['id', 'DESC']] }).then((posts) => res.render('home', { posts: posts }))
 })
 
 
-app.get("/cadastro",(req,res)=>res.render('form'))
+app.get("/cadastro", (req, res) => res.render('form'))
 
-app.post("/add",(req,res)=>{
-  Post.create({
-      titulo:req.body.titulo,
-      conteudo: req.body.conteudo
-  }).then(function () {
-      res.redirect('/')
-  }).catch((e)=> res.send(`Houve um erro:  ${e}`))
+app.post("/add", (req, res) => {
+    Post.create({
+        titulo: req.body.titulo,
+        conteudo: req.body.conteudo
+    }).then(function () {
+        res.redirect('/')
+    }).catch((e) => res.send(`Houve um erro:  ${e}`))
+})
+
+app.get('/deletar/:id', (req, res) => {
+    Post.destroy({ where: { 'id': req.params.id } }).then(() => res.send("Postagem deletada com sucesso")).catch((e) => res.send("Essa postagem não exite"))
 })
 
 app.listen(4041, function (params) {
